@@ -1,6 +1,10 @@
 from sanic import Sanic, response
+from sanic.response import json
 from warmup import load_model
-from run import run_model
+from run import encode_image, encode_text , get_similarity
+import requests
+from io import BytesIO
+import base64
 
 # do the warmup step globally, to have a reuseable model instance
 model = load_model()
@@ -15,18 +19,51 @@ def healthcheck(request):
 @app.route('/', methods=["POST"]) # Do not edit - POST requests to "/" are a required interface
 def inference(request):
     try:
-        model_inputs = response.json.loads(request.json)
+        model_parameters = json.loads(request.json)
     except:
-        model_inputs = request.json
+        model_parameters = request.json
+        
+    image_byte_string = model_parameters.get('imageByteString', None)
+    image_url = model_parameters.get('imageURL', None)
+    text = model_parameters.get('text', None)
+    texts = model_parameters.get('texts', None)
 
-    # Parse out your arguments
-    prompt = model_inputs.get('prompt', None)
-    if prompt == None:
-        return response.json({'message': "No prompt provided"})
+    if image_byte_string == None and image_url == None:
+        return json({'message': "No image provided"})
+
+    if text == None and texts ==  None:
+        return json({'message': "No text provided"})
+
     
-    output = run_model(model, prompt)
+    image_bytes = None
 
-    return response.json(output) # Do not edit - returning a dictionary as JSON is a required interface
+    if image_url != None:
+        response = requests.get(image_url)
+        image_bytes = BytesIO(response.content)
+
+    if image_byte_string != None:
+        image_encoded = image_byte_string.encode('utf-8')
+        image_bytes = BytesIO(base64.b64decode(image_encoded))
+
+    # preencode the image
+    image_encoding = encode_image(image_bytes,model)
+
+    response = {}
+
+    if texts != None:
+        sims = []
+        for t in texts:
+            text_encoding = encode_text(t,model)
+            sim = get_similarity(text_encoding, image_encoding)
+            sims.append(sim)
+            response["similarities"] = sims
+
+    if text != None:
+        text_encoding = encode_text(text,model)
+        sim = get_similarity(text_encoding, image_encoding)
+        response['similarity'] = sim
+
+    return json(response) # Do not edit - returning a dictionary as JSON is a required interface
 
 
 if __name__ == '__main__':
