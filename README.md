@@ -1,54 +1,57 @@
+# 🍌 Banana Serverless
 
-# serverless-template for CLIP
+Setup and host CLIP on Banana in minutes.
 
-Setup and host CLIP on Banana in minutes
+This repo gives a prebuilt CLIP server for use on Banana.
 
-# How to use this repo:
+If you want to generalize this to deploy anything on Banana, [see the guide here](https://www.notion.so/banana-dev/How-To-Serve-Anything-On-Banana-125a65fc4d30496ba1408de1d64d052a).
 
-1) Fork this repo
+## Quickstart:
 
-2) Tweak the repo to your liking:
-- `requirements.txt` 
-	- this file holds the pip dependencies, which are installed via the Dockerfile.
-	- add or remove your pip packages, one per line.
-- `src/download.py` 
-	- this file downloads your model weights to the local file system during the build step. 
-	- This is an optional file. The only goal is to get your model weights built into the docker image. This example uses a `download.py` script to download weights. If you can acheive the download through other means, such as a `RUN cURL ...` from the Dockerfile, feel free.
-- `src/warmup.py` 
-	- this file defines `load_model()`, which loads the model from local weights, loads it onto the GPU, and returns the model object.
-	- add or remove logic to the `load_model()` function for any logic that you want to run once at system startup, before the http server starts.
-	- the max size of a model is currently limited to 15gb in GPU RAM. Banana does not support greater than that at the moment.
-- `src/run.py` 
-	- this file defines ML related logic for each call including tensor preprocessing, sampling logic in postprocessing, etc.
-- `src/app.py`
-	- this file defines the http server (Sanic, in this case, but you can change to Flask) which starts once the load_model() finishes.
-	- edit this file to define the API
-		- the values you parse from model_inputs defines the JSON schema you'd use as inputs
-		- the json you return as model_outputs defines the JSON schema you'd expect as an output
+The repo is already set up to run a basic [HuggingFace BERT](https://huggingface.co/docs/transformers/model_doc/bert) model.
+1. Run `pip3 install -r requirements.txt` to download dependencies.
+2. Run `python3 server.py` to start the server.
+3. Run `python3 test.py` in a different terminal session to test against it.
 
-3) Test and verify it works
+## Make it your own:
 
-# Deploying to Banana hosted Serverless GPUs:
+1. Edit `app.py` to load and run your model.
+2. Make sure to test with `test.py`!
+3. When ready to deploy:
+  - edit `download.py` (or the `Dockerfile` itself) with scripts download your custom model weights at build time
+  - edit `requirements.txt` with your pip packages. Don't delete the "sanic" line, as it's a banana dependency.
 
-1) [Log into the Banana dashboard](https://app.banana.dev/) and get your API Key
+## Move to prod:
 
-2) Email us at `onboarding@banana.dev` with the following message:
-```
-Hello, I'd like to be onboarded to serverless.
-My github username is: YOUR_GITHUB_USERNAME
-My Banana API Key is: YOUR_API_KEY
-My preferred billing email is: YOU@EMAIL.COM
-```
-Your github username, banana api key, and email are required for us to authorize you into the system. 
-We will reply and confirm when you're added.
+At this point, you have a functioning http server for your ML model. You can use it as is, or package it up with our provided `Dockerfile` and deploy it to your favorite container hosting provider!
 
-3) Install the [Banana Github App](https://github.com/apps/banana-serverless) to the forked repo. 
+If Banana is your favorite GPU hosting provider (and we sure hope it is), read on!
 
-4) Push to main to trigger a build and deploy to the hosted backend. This will do nothing if you have not completed the email in step 2 above.
+# 🍌
 
-6) Monitor your email inbox for status updates, which will include a unique model key for this repo for you to use through the Banana SDKs.
+# Deploy to Banana Serverless:
 
-To continue to the Banana SDKs, find them linked here:
+Three steps:
+1. Create your own copy of this template repo. Either:
+- Click "[Fork](https://github.com/bananaml/serverless-template/fork)" (creates a public repo)
+- Create your own repo and copy the template files into it (to create a private version)
+
+2. Install the [Banana Github App](https://github.com/apps/banana-serverless) to your new repo.
+
+3. Login in to the [Banana Dashboard](https://app.banana.dev) and setup your account by saving your payment details and linking your Github.
+
+From then onward, any pushes to the default repo branch (usually "main" or "master") trigger Banana to build and deploy your server, using the Dockerfile.
+Throughout the build we'll sprinkle in some secret sauce to make your server extra snappy 🔥
+
+It'll then be deployed on our Serverless GPU cluster and callable with any of our serverside SDKs:
+
 - [Python](https://github.com/bananaml/banana-python-sdk)
 - [Node JS / Typescript](https://github.com/bananaml/banana-node-sdk)
 - [Go](https://github.com/bananaml/banana-go)
+
+You can monitor buildtime and runtime logs by clicking the logs button in the model view on the [Banana Dashboard](https://app.banana.dev)
+
+<br>
+
+## Use Banana for scale.
+
