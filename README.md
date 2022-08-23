@@ -8,7 +8,7 @@ If you want to generalize this to deploy anything on Banana, [see the guide here
 
 ## Quickstart:
 
-The repo is already set up to run a basic [HuggingFace BERT](https://huggingface.co/docs/transformers/model_doc/bert) model.
+The repo is already set up to run a basic CLIP model.
 1. Run `pip3 install -r requirements.txt` to download dependencies.
 2. Run `python3 server.py` to start the server.
 3. Run `python3 test.py` in a different terminal session to test against it.
