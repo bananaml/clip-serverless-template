@@ -6,3 +6,5 @@ regex
 tqdm
 git+https://github.com/openai/CLIP.git
 requests
+websockets==10.0
+accelerate
