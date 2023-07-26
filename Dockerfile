@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y git
 RUN pip3 install --upgrade pip
 ADD requirements.txt requirements.txt
 
-RUN pip3 install sanic==22.6.2
+RUN pip3 install sanic
 RUN pip3 install -r requirements.txt
 
 
