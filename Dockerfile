@@ -14,6 +14,9 @@ RUN pip3 install --upgrade pip
 ADD requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
 
+# RUN export SANIC_NO_UVLOOP=true
+# RUN export SANIC_NO_UJSON=true
+
 # Add your model weight files 
 # (in this case we have a python script)
 ADD src/download.py .
