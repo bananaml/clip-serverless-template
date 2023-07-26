@@ -9,7 +9,7 @@ import base64
 # do the warmup step globally, to have a reuseable model instance
 model = load_model()
 
-app = Sanic("my_app")
+app = Sanic("clip-serverless-template")
 
 
 @app.route('/healthcheck', methods=["GET"])
