@@ -21,6 +21,6 @@ RUN python3 download.py
 
 ADD src/ .
 
-EXPOSE 8000
+EXPOSE "8000"
 
 CMD python3 -u app.py
