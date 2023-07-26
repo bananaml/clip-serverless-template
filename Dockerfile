@@ -4,7 +4,7 @@ WORKDIR /
 
 # nvidia rotated their GPG keys so need to refresh them 
 # RUN rm /etc/apt/sources.list.d/cuda.list
-# RUN rm /etc/apt/sources.list.d/nvidia-ml.list
+RUN rm /etc/apt/sources.list.d/nvidia-ml.list
 
 # Install git
 RUN apt-get update && apt-get install -y git
@@ -21,6 +21,6 @@ RUN python3 download.py
 
 ADD src/ .
 
-EXPOSE "8000"
+EXPOSE 8000
 
 CMD python3 -u app.py
