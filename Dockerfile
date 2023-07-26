@@ -12,9 +12,8 @@ RUN apt-get update && apt-get install -y git
 # Install python packages
 RUN pip3 install --upgrade pip
 ADD requirements.txt requirements.txt
-RUN export SANIC_NO_UVLOOP=true
-RUN export SANIC_NO_UJSON=true
-RUN pip3 install sanic
+
+RUN pip3 install sanic==22.6.2
 RUN pip3 install -r requirements.txt
 
 
