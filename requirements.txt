@@ -8,3 +8,5 @@ requests
 potassium
 websockets
 accelerate
+numpy
+Pillow
